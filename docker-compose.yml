@@ -1,0 +1,75 @@
+services:
+  zenith-api:
+    container_name: zenith-api
+    restart: always
+    build:
+      context: ./zenith-api
+      dockerfile: Dockerfile
+    environment:
+      DB_CONNECTION: pgsql
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_DATABASE: postgres
+      DB_USERNAME: postgres
+      DB_PASSWORD: postgres
+    volumes:
+      - ./zenith-api:/var/www/html
+    networks:
+      - project-network
+    expose:
+      - 80
+
+  zenith-web:
+    container_name: zenith-web
+    restart: always
+    build:
+      context: ./academia-web
+      dockerfile: Dockerfile
+    volumes:
+      - ./academia-web:/var/www/html
+    ports:
+      - "3000:3000"
+    expose:
+      - 3000
+      - 3001
+    networks:
+      - project-network
+
+  nginx:
+    container_name: nginx
+    restart: always
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    depends_on:
+      - zenith-api
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/logs:/etc/nginx/logs
+    networks:
+      - project-network
+
+  postgres:
+    # psql -hlocalhost -p5000 -Upostgres -dpostgres
+    container_name: postgres
+    restart: always
+    build: 
+      context: ./postgres
+      dockerfile: Dockerfile
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5000:5432"
+    expose:
+      - 5432
+    volumes:
+      - ./postgres/data:/var/lib/postgresql/data
+    networks:
+      - project-network
+
+networks:
+  project-network:
+    driver: bridge

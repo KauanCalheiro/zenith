@@ -1,0 +1,6 @@
+[submodule "academia-web"]
+	path = academia-web
+	url = https://github.com/KauanCalheiro/academia-web.git
+[submodule "zenith-api"]
+	path = zenith-api
+	url = https://github.com/KauanCalheiro/zenith-api.git
