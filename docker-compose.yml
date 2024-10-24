@@ -26,7 +26,7 @@ services:
       context: ./academia-web
       dockerfile: Dockerfile
     volumes:
-      - ./academia-web:/var/www/html
+      - ./academia-web:/app
     expose:
       - 3000
       - 3001
