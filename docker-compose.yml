@@ -27,8 +27,6 @@ services:
       dockerfile: Dockerfile
     volumes:
       - ./academia-web:/var/www/html
-    ports:
-      - "3000:3000"
     expose:
       - 3000
       - 3001
@@ -43,6 +41,7 @@ services:
       dockerfile: Dockerfile
     depends_on:
       - zenith-api
+      - zenith-web
     ports:
       - "80:80"
     volumes:
