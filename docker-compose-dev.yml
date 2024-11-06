@@ -1,10 +1,33 @@
 services:
+  postgres:
+    # psql -hlocalhost -p5000 -Upostgres -dpostgres
+    container_name: postgres
+    restart: always
+    build: 
+      context: ./postgres
+      dockerfile: Dockerfile
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5000:5432"
+    expose:
+      - 5432
+    volumes:
+      - ./postgres/data:/var/lib/postgresql/data
+      - ./postgres/dump.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - project-network
+
   zenith-api:
     container_name: zenith-api
     restart: always
     build:
       context: ./zenith-api
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.dev
+    depends_on:
+      - postgres
     environment:
       DB_CONNECTION: pgsql
       DB_HOST: postgres
@@ -24,12 +47,13 @@ services:
     restart: always
     build:
       context: ./academia-web
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.dev
+    depends_on:
+      - zenith-api
     volumes:
       - ./academia-web:/app
     expose:
       - 3000
-      - 3001
     networks:
       - project-network
 
@@ -49,25 +73,6 @@ services:
     networks:
       - project-network
 
-  postgres:
-    # psql -hlocalhost -p5000 -Upostgres -dpostgres
-    container_name: postgres
-    restart: always
-    build: 
-      context: ./postgres
-      dockerfile: Dockerfile
-    environment:
-      POSTGRES_DB: postgres
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-    ports:
-      - "5000:5432"
-    expose:
-      - 5432
-    volumes:
-      - ./postgres/data:/var/lib/postgresql/data
-    networks:
-      - project-network
 
 networks:
   project-network:
