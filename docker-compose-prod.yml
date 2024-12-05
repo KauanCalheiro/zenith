@@ -21,21 +21,23 @@ services:
     container_name: zenith-api
     restart: always
     build:
-      context: ./zenith-api
-      dockerfile: Dockerfile.prod
+      context: ./academia-api
+      dockerfile: Dockerfile.dev
     depends_on:
       - postgres
     environment:
       DB_CONNECTION: pgsql
       DB_HOST: postgres
       DB_PORT: 5432
-      DB_DATABASE: postgres
-      DB_USERNAME: postgres
-      DB_PASSWORD: postgres
-    networks:
-      - project-network
+      DB_DATABASE: zntsystem
+      DB_USERNAME: zntsystem
+      DB_PASSWORD: zntsystem
+    volumes:
+      - ./academia-api:/var/www/html
     expose:
       - 80
+    networks:
+      - project-network
 
   zenith-web:
     container_name: zenith-web
@@ -45,6 +47,8 @@ services:
       dockerfile: Dockerfile.prod
     depends_on:
       - zenith-api
+    volumes:
+      - ./academia-web:/app
     expose:
       - 3000
     networks:
